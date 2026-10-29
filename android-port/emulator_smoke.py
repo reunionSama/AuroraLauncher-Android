@@ -34,6 +34,10 @@ try:
             nodes=list(tree.iter('node'))
             tool=next((n for n in nodes if 'Aurora 工具' in (n.get('text','')+n.get('content-desc',''))),None)
             if tool is not None:
+                if any('finish the guide' in n.get('text','').lower() or '结束引导' in n.get('text','') for n in nodes):
+                    adb('shell','input','tap','400','700');time.sleep(2)
+                    tree=snapshot();nodes=list(tree.iter('node')) if tree is not None else []
+                    tool=next((n for n in nodes if 'Aurora 工具' in (n.get('text','')+n.get('content-desc',''))),tool)
                 with (out/'home.png').open('wb') as f:subprocess.run(['adb','exec-out','screencap','-p'],stdout=f,check=True)
                 custom=next((n for n in nodes if n.get('text')=='极光与个性化'),None)
                 report['aurora_home_visible']=custom is not None
@@ -41,7 +45,11 @@ try:
                     tap(custom);time.sleep(1)
                     tree=snapshot()
                     report['personalization_opened']=tree is not None and any('让 Aurora 更像你的启动器' in n.get('text','') for n in tree.iter('node'))
-                    adb('shell','input','keyevent','4');time.sleep(1)
+                    if report.get('personalization_opened'):
+                        with (out/'personalization.png').open('wb') as f:subprocess.run(['adb','exec-out','screencap','-p'],stdout=f,check=True)
+                        adb('shell','input','keyevent','4');time.sleep(1)
+                    tree=snapshot();nodes=list(tree.iter('node')) if tree is not None else []
+                    tool=next((n for n in nodes if 'Aurora 工具' in (n.get('text','')+n.get('content-desc',''))),tool)
                 tap(tool);time.sleep(2)
                 tree=snapshot()
                 if tree is not None and any('我的工作台' in n.get('text','') for n in tree.iter('node')):
