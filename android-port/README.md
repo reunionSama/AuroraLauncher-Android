@@ -79,3 +79,4 @@ signing certificate are required. Android permission and package installation
 still require user interaction. Unknown newer generic APKs are recognized using
 asset update time and validated by their actual package metadata after downloading.
 No artificial update is published merely to exercise this feature.
+
